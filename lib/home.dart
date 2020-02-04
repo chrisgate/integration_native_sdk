@@ -2,12 +2,19 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 class HomePage extends StatelessWidget {
-  static const surveyMonkeyPlatform = const MethodChannel(
-      'com.example.integration_native_sdk_demo/surveyMonkey');
-  static String sessionSurveyMonkeyHash = 'Z9PZRB7';
+  static const platform =
+      const MethodChannel('com.example.integration_native_sdk_demo/native');
+  static const KEY_MOMO_NATIVE = "requestPaymentMOMO";
 
-  static const momoPlatform =
-      const MethodChannel('com.example.integration_native_sdk_demo/momo');
+  var momoOrderDetail = {
+    "merchantname": "CGV Cinema",
+    "merchantcode": "CGV19072017",
+    "merchantnamelabel": "Nhà cung cấp",
+    "partner_code": "CGV19072017",
+    "amount": 10000,
+    "description": "Thanh toán combo 100",
+    "orderId": "orderId123456789",
+  };
 
   @override
   Widget build(BuildContext context) {
@@ -17,12 +24,6 @@ class HomePage extends StatelessWidget {
       ),
       body: Column(
         children: <Widget>[
-          Center(
-            child: RaisedButton(
-              onPressed: _loadSurveyMonkey,
-              child: Text("Load SurveyMonkey"),
-            ),
-          ),
           Center(
             child: RaisedButton(
               onPressed: _loadMomo,
@@ -36,22 +37,13 @@ class HomePage extends StatelessWidget {
 
   Future _loadMomo() async {
     try {
-      final result = await momoPlatform.invokeMethod('momo');
+      final result = await platform.invokeMethod(
+        KEY_MOMO_NATIVE,
+        momoOrderDetail,
+      );
       print('result: $result');
     } on PlatformException catch (e) {
       print(e.message);
-    }
-  }
-
-  Future _loadSurveyMonkey() async {
-    try {
-      final result = await surveyMonkeyPlatform.invokeMethod(
-        'surveyMonkey',
-        {"sessionSurveyMonkeyHash": sessionSurveyMonkeyHash},
-      );
-      print('_loadSurveyMonkey result: $result');
-    } on PlatformException catch (e) {
-      print(e.runtimeType);
     }
   }
 }
